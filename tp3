@@ -172,3 +172,717 @@ def test():
 
 if __name__ == '__main__':
     test()
+++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+import prueba_import
+
+
+def cargar():
+    v = []
+
+    archivo = open("peajes-tp3 (1).txt", "r")
+
+    array = []
+
+
+    for renglon in archivo:
+        renglon = renglon.strip()
+        if len(renglon)<25:
+            array.append(renglon)
+
+
+    for i in range(len(array)):
+        ticket = int(array[i][0:10])
+        patente = array[i][10:17]
+        vehiculo = int(array[i][17])
+        forma_de_pago = int(array[i][18])
+        cabina = int(array[i][19])
+        km = int(array[i][20:])
+
+        v.append(prueba_import.Ticket(ticket,patente,vehiculo,forma_de_pago,cabina,km))
+
+    return v
+
+
+def mostrar(v):
+    n=len(v)
+    for i in range(n):
+        print(v[i])
+
+def validar_numero(inf):
+    min = inf
+
+    while min <= inf and len(str(min)) <= 10:
+        min = int(input("ingrese numero  mayor a cero:"))
+    return min
+
+def validate_type(mn=0,mx=2):
+
+    vehiculo = int(input("ingrese un dígito entre 0 y 2 que indica el tipo de vehículo (0: motocicleta, 1: automóvil, 2: camión)"))
+    while vehiculo < mn or vehiculo > mx:
+        vehiculo = int(input("no olvide que el vehiculo debe ser entre 0 y 2"))
+    return vehiculo
+
+def validate_type_pago(mn=1,mx=2):
+    pago = int(input("ingrese un dígito 1 o 2 que indica la forma de pago (1: manual, 2 telepeaje)."))
+    while pago< mn or pago > mx:
+        pago = int(input("no olvide que el pago debe ser entre (1: manual, 2 telepeaje)"))
+    return pago
+
+def validate_type_cabina(mn=0,mx=4):
+    cabina = int(input("ingrese un dígito entre 0 y 4 que indica el país donde está la cabina que hizo el cobro (0: Argentina - 1: Bolivia - 2: Brasil - 3: Paraguay - 4: Uruguay).  "))
+    while cabina < mn or cabina > mx:
+        cabina = int(input("no olvide que la cabina debe ser entre (0: Argentina - 1: Bolivia - 2: Brasil - 3: Paraguay - 4: Uruguay)"))
+    return cabina
+
+def validar_patente():
+    patente1 = input("ingrese patente: ").upper()
+    while len(patente1) > 7:
+        patente1=input("ingrese patente de hasta 7 caracteres: ")
+    print(len(patente1))
+    if len(patente1)<7:
+        total_espacios =7-len(patente1)
+        print(total_espacios)
+        patente1 = total_espacios*" "+str(patente1)
+        print(patente1)
+    return str(patente1)
+
+def carga():
+    v = []
+    ticket=int(validar_numero(0))
+    patente = validar_patente()
+    vehiculo = validate_type()
+    forma_de_pago = validate_type_pago()
+    cabina = validate_type_cabina()
+    km = int(validar_numero(0))
+
+    v.append(prueba_import.Ticket(ticket, patente, vehiculo, forma_de_pago, cabina, km))
+    return v
+
+
+def carga_manual(v):
+    ticket = validar_numero(0)
+    patente = validar_patente()
+    vehiculo = validate_type()
+    forma_de_pago = validate_type_pago()
+    cabina = validate_type_cabina()
+    km = int(validar_numero(0))
+    v.append(prueba_import.Ticket(ticket, patente, vehiculo, forma_de_pago, cabina, km))
+    return v
+
+
+def mostrarporticket(v):
+    ordenar(v)
+    for i in range(len(v)):
+        print(str(v[i])+" "+str(patente(v[i].patente)))
+
+def ordenar(v):
+    n=len(v)
+    for i in range(n-1):
+        for j in range(i+1,n):
+            if int(v[i].ticket)>int(v[j].ticket):
+                v[i],v[j]=v[j],v[i]
+
+def patente(patente):
+
+
+    if (patente[0:2].isalpha() and patente[2:5].isdigit() and patente[5:].isalpha()):
+
+        p = "Argentina"
+
+        return p
+
+    elif (patente[0:2].isalpha() and patente[2:].isdigit()):
+
+        p = "Bolivia"
+        return p
+
+    elif (patente[0:4].isalpha() and patente[4:].isdigit()):
+
+        p = "Paraguay"
+        return p
+    elif (patente[0:3].isalpha() and patente[3:].isdigit()):
+
+        p = "Uruguay"
+        return p
+    elif (patente[0:3].isalpha() and patente[3].isdigit() and patente[4].isalpha() and patente[5:].isdigit()):
+
+        p = "Brasil"
+        return p
+    elif (patente[0] == " " and patente[1:5].isalpha() and patente[5:].isdigit()):
+
+        p = "Chile"
+        return p
+    else:
+        p = "otro"
+        return p
+
+def buscar(v):
+    n = len(v)
+    p = input("Ingrese patente a buscar")
+    if len(p) < 7:
+        total_espacios = 7 - len(p)
+        p = total_espacios * " " + str(p)
+    x = int(input("Ingrese cabina a buscar (0: Argentina - 1: Bolivia - 2: Brasil - 3: Paraguay - 4: Uruguay)."))
+
+    for i in range(n):
+        if p == v[i].patente and x == v[i].cabina:
+            print(v[i])
+            return
+
+def verifticket(v):
+    n=len(v)
+    t=(input("ingrese ticket a buscar sin CEROS "))
+    print(str(len(t)))
+
+
+    for i in range(n):
+        print(v[i].ticket)
+        if t == str(v[i].ticket):
+            if v[i].forma_de_pago == 1:
+                v[i].forma_de_pago = 2
+            elif v[i].forma_de_pago == 2:
+                v[i].forma_de_pago = 1
+            print(v[i])
+            return
+
+
+def test():
+    v = []
+    opc = 0
+
+
+    while opc !=5:
+        print("1:Cargar archivos y borrar el anterior array"
+              "\n2:Cargar un arreglo manualmente"
+              "\n3:Mostrar arreglo ordenado por ticket y con su pais correspondiente"
+              "\n4:Buscar arreglo por patente y cabina: ")
+        opc=int(input("ingrese opcion a realizar"))
+        if opc == 1:
+            print("esta seguro que desea crear un nuevo arreglo?1:SI 2:NO")
+            decision=int(input("ingrese opcion: "))
+            if decision == 1:
+                v=cargar()
+                mostrar(v)
+
+            else:
+                continue
+
+        elif opc == 2:
+
+            if len(v) == 0:
+                v=carga()
+                mostrar(v)
+
+            elif len(v) !=0:
+                carga_manual(v)
+                mostrar(v)
+
+        elif opc == 3:
+            if len(v) != 0:
+                mostrarporticket(v)
+            else:
+                print("no hay suficientes datos cargados")
+
+        elif opc == 4:
+
+            if len(v) !=0:
+                buscar(v)
+            else:
+                print("No hay suficientes datos cargados")
+
+        elif opc == 5:
+            if len(v) !=0:
+                verifticket(v)
+            else:
+                print("No hay suficientes datos cargados")
+
+if __name__ == '__main__':
+    test()
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+import prueba_import
+
+def cargar():
+    v = []
+
+    archivo = open("peajes-tp3 (1).txt", "r")
+
+    array = []
+
+
+    for renglon in archivo:
+        renglon = renglon.strip()
+        if len(renglon)<25:
+            array.append(renglon)
+
+
+    for i in range(len(array)):
+        ticket = int(array[i][0:10])
+        patente = array[i][10:17]
+        vehiculo = int(array[i][17])
+        forma_de_pago = int(array[i][18])
+        cabina = int(array[i][19])
+        km = int(array[i][20:])
+
+        v.append(prueba_import.Ticket(ticket,patente,vehiculo,forma_de_pago,cabina,km))
+
+    return v
+
+
+def mostrar(v):
+    n=len(v)
+    for i in range(n):
+        print(v[i])
+
+def validar_numero(inf):
+    min = inf
+
+    while min <= inf and len(str(min)) <= 10:
+        min = int(input("ingrese numero  mayor a cero:"))
+    return min
+
+def validate_type(mn=0,mx=2):
+
+    vehiculo = int(input("ingrese un dígito entre 0 y 2 que indica el tipo de vehículo (0: motocicleta, 1: automóvil, 2: camión)"))
+    while vehiculo < mn or vehiculo > mx:
+        vehiculo = int(input("no olvide que el vehiculo debe ser entre 0 y 2"))
+    return vehiculo
+
+def validate_type_pago(mn=1,mx=2):
+    pago = int(input("ingrese un dígito 1 o 2 que indica la forma de pago (1: manual, 2 telepeaje)."))
+    while pago< mn or pago > mx:
+        pago = int(input("no olvide que el pago debe ser entre (1: manual, 2 telepeaje)"))
+    return pago
+
+def validate_type_cabina(mn=0,mx=4):
+    cabina = int(input("ingrese un dígito entre 0 y 4 que indica el país donde está la cabina que hizo el cobro (0: Argentina - 1: Bolivia - 2: Brasil - 3: Paraguay - 4: Uruguay).  "))
+    while cabina < mn or cabina > mx:
+        cabina = int(input("no olvide que la cabina debe ser entre (0: Argentina - 1: Bolivia - 2: Brasil - 3: Paraguay - 4: Uruguay)"))
+    return cabina
+
+def validar_patente():
+    patente1 = input("ingrese patente: ").upper()
+    while len(patente1) > 7:
+        patente1=input("ingrese patente de hasta 7 caracteres: ")
+    print(len(patente1))
+    if len(patente1)<7:
+        total_espacios =7-len(patente1)
+        print(total_espacios)
+        patente1 = total_espacios*" "+str(patente1)
+        print(patente1)
+    return str(patente1)
+
+def carga():
+    v = []
+    ticket = int(validar_numero(0))
+    patente = validar_patente()
+    vehiculo = validate_type()
+    forma_de_pago = validate_type_pago()
+    cabina = validate_type_cabina()
+    km = int(validar_numero(0))
+
+    v.append(prueba_import.Ticket(ticket, patente, vehiculo, forma_de_pago, cabina, km))
+    return v
+
+
+def carga_manual(v):
+    ticket = validar_numero(0)
+    patente = validar_patente()
+    vehiculo = validate_type()
+    forma_de_pago = validate_type_pago()
+    cabina = validate_type_cabina()
+    km = int(validar_numero(0))
+    v.append(prueba_import.Ticket(ticket, patente, vehiculo, forma_de_pago, cabina, km))
+    return v
+
+
+def mostrarporticket(v):
+    ordenar(v)
+    for i in range(len(v)):
+        print(str(v[i])+" "+str(patente(v[i].patente)))
+
+def ordenar(v):
+    n=len(v)
+    for i in range(n-1):
+        for j in range(i+1,n):
+            if int(v[i].ticket)>int(v[j].ticket):
+                v[i],v[j]=v[j],v[i]
+
+def patente(patente):
+
+
+    if (patente[0:2].isalpha() and patente[2:5].isdigit() and patente[5:].isalpha()):
+
+        p = "Argentina"
+
+        return p
+
+    elif (patente[0:2].isalpha() and patente[2:].isdigit()):
+
+        p = "Bolivia"
+        return p
+
+    elif (patente[0:4].isalpha() and patente[4:].isdigit()):
+
+        p = "Paraguay"
+        return p
+    elif (patente[0:3].isalpha() and patente[3:].isdigit()):
+
+        p = "Uruguay"
+        return p
+    elif (patente[0:3].isalpha() and patente[3].isdigit() and patente[4].isalpha() and patente[5:].isdigit()):
+
+        p = "Brasil"
+        return p
+    elif (patente[0] == " " and patente[1:5].isalpha() and patente[5:].isdigit()):
+
+        p = "Chile"
+        return p
+    else:
+        p = "otro"
+        return p
+
+def buscar(v):
+    n = len(v)
+    p = input("Ingrese patente a buscar")
+    if len(p) < 7:
+        total_espacios = 7 - len(p)
+        p = total_espacios * " " + str(p)
+    x = int(input("Ingrese cabina a buscar (0: Argentina - 1: Bolivia - 2: Brasil - 3: Paraguay - 4: Uruguay)."))
+
+    for i in range(n):
+        if p == v[i].patente and x == v[i].cabina:
+            print(v[i])
+            return
+
+
+def verifticket(v):
+    n=len(v)
+    t=(input("ingrese ticket a buscar sin CEROS "))
+    for i in range(n):
+        if t == str(v[i].ticket):
+            if v[i].forma_de_pago == 1:
+                v[i].forma_de_pago = 2
+            elif v[i].forma_de_pago == 2:
+                v[i].forma_de_pago = 1
+            print(v[i])
+            return
+    print("no se encontraron coincidencias")
+
+
+def contadorpaises(v):
+    paises=["Argentina","Bolivia","Paraguay","Uruguay","Brasil","Chile","otro"]
+    for i in range(len(v)):
+        
+    
+
+
+def test():
+    v = []
+    opc = 0
+
+
+    while opc !=7:
+        print()
+        print("1:Cargar archivos y borrar el anterior array"
+              "\n2:Cargar un arreglo manualmente"
+              "\n3:Mostrar arreglo ordenado por ticket y con su pais correspondiente"
+              "\n4:Buscar arreglo por patente y cabina: "
+              "\n5:Buscar por ticket e invertir valor de Forma de Pago"
+              "\n6:")
+        opc=int(input("ingrese opcion a realizar"))
+        if opc == 1:
+            print("esta seguro que desea crear un nuevo arreglo?1:SI 2:NO")
+            decision=int(input("ingrese opcion: "))
+            if decision == 1:
+                v=cargar()
+                mostrar(v)
+
+            else:
+                continue
+
+        elif opc == 2:
+
+            if len(v) == 0:
+                v=carga()
+                mostrar(v)
+
+            elif len(v) !=0:
+                carga_manual(v)
+                mostrar(v)
+
+        elif opc == 3:
+            if len(v) != 0:
+                mostrarporticket(v)
+            else:
+                print("no hay suficientes datos cargados")
+
+        elif opc == 4:
+
+            if len(v) != 0:
+                buscar(v)
+            else:
+                print("No hay suficientes datos cargados")
+
+        elif opc == 5:
+            if len(v) != 0:
+                verifticket(v)
+            else:
+                print("No hay suficientes datos cargados")
+        elif opc == 6:
+            if len(v) != 0:
+                contadorpaises(v)
+
+
+if __name__ == '__main__':
+    test()
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+import prueba_import
+
+def cargar():
+    v = []
+
+    archivo = open("peajes-tp3 (1).txt", "r")
+
+    array = []
+
+
+    for renglon in archivo:
+        renglon = renglon.strip()
+        if len(renglon)<25:
+            array.append(renglon)
+
+
+    for i in range(len(array)):
+        ticket = int(array[i][0:10])
+        patente = array[i][10:17]
+        vehiculo = int(array[i][17])
+        forma_de_pago = int(array[i][18])
+        cabina = int(array[i][19])
+        km = int(array[i][20:])
+
+        v.append(prueba_import.Ticket(ticket,patente,vehiculo,forma_de_pago,cabina,km))
+
+    return v
+
+
+def mostrar(v):
+    n=len(v)
+    for i in range(n):
+        print(v[i])
+
+def validar_numero(inf):
+    min = inf
+
+    while min <= inf and len(str(min)) <= 10:
+        min = int(input("ingrese numero  mayor a cero:"))
+    return min
+
+def validate_type(mn=0,mx=2):
+
+    vehiculo = int(input("ingrese un dígito entre 0 y 2 que indica el tipo de vehículo (0: motocicleta, 1: automóvil, 2: camión)"))
+    while vehiculo < mn or vehiculo > mx:
+        vehiculo = int(input("no olvide que el vehiculo debe ser entre 0 y 2"))
+    return vehiculo
+
+def validate_type_pago(mn=1,mx=2):
+    pago = int(input("ingrese un dígito 1 o 2 que indica la forma de pago (1: manual, 2 telepeaje)."))
+    while pago< mn or pago > mx:
+        pago = int(input("no olvide que el pago debe ser entre (1: manual, 2 telepeaje)"))
+    return pago
+
+def validate_type_cabina(mn=0,mx=4):
+    cabina = int(input("ingrese un dígito entre 0 y 4 que indica el país donde está la cabina que hizo el cobro (0: Argentina - 1: Bolivia - 2: Brasil - 3: Paraguay - 4: Uruguay).  "))
+    while cabina < mn or cabina > mx:
+        cabina = int(input("no olvide que la cabina debe ser entre (0: Argentina - 1: Bolivia - 2: Brasil - 3: Paraguay - 4: Uruguay)"))
+    return cabina
+
+def validar_patente():
+    patente1 = input("ingrese patente: ").upper()
+    while len(patente1) > 7:
+        patente1=input("ingrese patente de hasta 7 caracteres: ")
+    print(len(patente1))
+    if len(patente1)<7:
+        total_espacios =7-len(patente1)
+        print(total_espacios)
+        patente1 = total_espacios*" "+str(patente1)
+        print(patente1)
+    return str(patente1)
+
+def carga():
+    v = []
+    ticket = int(validar_numero(0))
+    patente = validar_patente()
+    vehiculo = validate_type()
+    forma_de_pago = validate_type_pago()
+    cabina = validate_type_cabina()
+    km = int(validar_numero(0))
+
+    v.append(prueba_import.Ticket(ticket, patente, vehiculo, forma_de_pago, cabina, km))
+    return v
+
+
+def carga_manual(v):
+    ticket = validar_numero(0)
+    patente = validar_patente()
+    vehiculo = validate_type()
+    forma_de_pago = validate_type_pago()
+    cabina = validate_type_cabina()
+    km = int(validar_numero(0))
+    v.append(prueba_import.Ticket(ticket, patente, vehiculo, forma_de_pago, cabina, km))
+    return v
+
+
+def mostrarporticket(v):
+    ordenar(v)
+    for i in range(len(v)):
+        print(str(v[i])+" "+str(patente(v[i].patente)))
+
+def ordenar(v):
+    n=len(v)
+    for i in range(n-1):
+        for j in range(i+1, n):
+            if int(v[i].ticket)>int(v[j].ticket):
+                v[i], v[j] = v[j], v[i]
+
+def patente(patente):
+
+
+    if (patente[0:2].isalpha() and patente[2:5].isdigit() and patente[5:].isalpha()):
+
+        p = "Argentina"
+
+        return p
+
+    elif (patente[0:2].isalpha() and patente[2:].isdigit()):
+
+        p = "Bolivia"
+        return p
+
+    elif (patente[0:4].isalpha() and patente[4:].isdigit()):
+
+        p = "Paraguay"
+        return p
+    elif (patente[0:3].isalpha() and patente[3:].isdigit()):
+
+        p = "Uruguay"
+        return p
+    elif (patente[0:3].isalpha() and patente[3].isdigit() and patente[4].isalpha() and patente[5:].isdigit()):
+
+        p = "Brasil"
+        return p
+    elif (patente[0] == " " and patente[1:5].isalpha() and patente[5:].isdigit()):
+
+        p = "Chile"
+        return p
+    else:
+        p = "otro"
+        return p
+
+
+def buscar(v):
+    n = len(v)
+    p = input("Ingrese patente a buscar")
+    if len(p) < 7:
+        total_espacios = 7 - len(p)
+        p = total_espacios * " " + str(p)
+    x = int(input("Ingrese cabina a buscar (0: Argentina - 1: Bolivia - 2: Brasil - 3: Paraguay - 4: Uruguay)."))
+
+    for i in range(n):
+        if p == v[i].patente and x == v[i].cabina:
+            print(v[i])
+            return
+
+
+def verifticket(v):
+    n = len(v)
+    t = (input("ingrese ticket a buscar sin CEROS "))
+    for i in range(n):
+        if t == str(v[i].ticket):
+            if v[i].forma_de_pago == 1:
+                v[i].forma_de_pago = 2
+            elif v[i].forma_de_pago == 2:
+                v[i].forma_de_pago = 1
+            print(v[i])
+            return
+    print("no se encontraron coincidencias")
+
+
+def contadorpaises(v):
+
+    paises = ["Argentina", "Bolivia", "Paraguay", "Uruguay", "Brasil", "Chile", "otro"]
+    c = [0]*len(paises)
+
+    for i in range(len(v)):
+        ind=paises.index(patente(v[i].patente))
+        c[ind] += 1
+    for i in range(len(c)):
+        if c[i]>0:
+            print(paises[i], c[i])
+
+
+def test():
+    v = []
+    opc = 0
+
+    while opc != 7:
+        print()
+        print("1:Cargar archivos y borrar el anterior array"
+              "\n2:Cargar un arreglo manualmente"
+              "\n3:Mostrar arreglo ordenado por ticket y con su pais correspondiente"
+              "\n4:Buscar arreglo por patente y cabina: "
+              "\n5:Buscar por ticket e invertir valor de Forma de Pago"
+              "\n6:")
+        opc=int(input("ingrese opcion a realizar"))
+        if opc == 1:
+            print("esta seguro que desea crear un nuevo arreglo?1:SI 2:NO")
+            decision=int(input("ingrese opcion: "))
+            if decision == 1:
+                v=cargar()
+                mostrar(v)
+
+            else:
+                continue
+
+        elif opc == 2:
+
+            if len(v) == 0:
+                v = carga()
+                mostrar(v)
+
+            elif len(v) != 0:
+                carga_manual(v)
+                mostrar(v)
+
+        elif opc == 3:
+            if len(v) != 0:
+                mostrarporticket(v)
+            else:
+                print("no hay suficientes datos cargados")
+
+        elif opc == 4:
+
+            if len(v) != 0:
+                buscar(v)
+            else:
+                print("No hay suficientes datos cargados")
+
+        elif opc == 5:
+            if len(v) != 0:
+                verifticket(v)
+            else:
+                print("No hay suficientes datos cargados")
+        elif opc == 6:
+            if len(v) != 0:
+                contadorpaises(v)
+
+
+if __name__ == '__main__':
+    test()
+
+
+
+
+
